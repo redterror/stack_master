@@ -9,7 +9,8 @@ module StackMaster::TemplateCompilers
       CfnDsl::ExternalParameters.defaults.clear # Ensure there's no leakage across invocations
       CfnDsl::ExternalParameters.defaults(compile_time_parameters.symbolize_keys)
       template_file_path = File.join(template_dir, template)
-      json_hash = ::CfnDsl.eval_file_with_extras(template_file_path).as_json
+      extras = Array(compiler_options["external_parameters"])
+      json_hash = ::CfnDsl.eval_file_with_extras(template_file_path, extras).as_json
       JSON.pretty_generate(json_hash)
     end
 

@@ -1,12 +1,13 @@
 RSpec.describe StackMaster::TemplateCompilers::Cfndsl do
   let(:compile_time_parameters) { { 'InstanceType' => 't2.medium' } }
+  let(:compiler_options) { {} }
 
   before(:all) { described_class.require_dependencies }
   let(:template_dir) { 'spec/fixtures/templates/rb/cfndsl/' }
 
   describe '.compile' do
     def compile
-      described_class.compile(template_dir, template, compile_time_parameters)
+      described_class.compile(template_dir, template, compile_time_parameters, compiler_options)
     end
 
     context 'valid cfndsl template' do
@@ -38,6 +39,16 @@ RSpec.describe StackMaster::TemplateCompilers::Cfndsl do
             .from('true')
             .to('false')
         end
+      end
+    end
+
+    context 'with external_parameters' do
+      let(:template_file_path) { 'spec/fixtures/templates/rb/cfndsl/sample.rb' }
+      let(:compiler_options)  { { "external_parameters" => 'foo/bar.yml' } }
+
+      it 'tells CfnDsl to use an external parameter file' do
+        expect(CfnDsl).to receive(:eval_file_with_extras).with(anything, ['foo/bar.yml'])
+        compile
       end
     end
   end
