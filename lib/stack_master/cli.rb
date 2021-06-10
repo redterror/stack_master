@@ -37,6 +37,9 @@ module StackMaster
       global_option '--skip-account-check', 'Do not check if command is allowed to execute in account' do
         StackMaster.skip_account_check!
       end
+      global_option '--endpoint-url URL', String, 'URL to use for AWS connections' do |url|
+        Aws.config.update(endpoint: url)
+      end
 
       command :apply do |c|
         c.syntax = 'stack_master apply [region_or_alias] [stack_name]'
