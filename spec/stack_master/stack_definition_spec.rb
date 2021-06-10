@@ -6,7 +6,8 @@ RSpec.describe StackMaster::StackDefinition do
       template: template,
       tags: tags,
       base_dir: base_dir,
-      parameter_files: parameter_files)
+      parameter_files: parameter_files,
+      endpoint_url: endpoint_url)
   end
 
   let(:region) { 'us-east-1' }
@@ -15,6 +16,7 @@ RSpec.describe StackMaster::StackDefinition do
   let(:tags) { {'environment' => 'production'} }
   let(:base_dir) { '/base_dir' }
   let(:parameter_files) { nil }
+  let(:endpoint_url) { nil }
 
   before do
     allow(Dir).to receive(:glob).with(
@@ -117,6 +119,14 @@ RSpec.describe StackMaster::StackDefinition do
 
     it "ignores parameter globs and resolves them relative to parameters_dir" do
       expect(stack_definition.all_parameter_files).to eq ["/base_dir/parameters/my-stack.yml", "/base_dir/my-stack.yml"]
+    end
+  end
+
+  context "with an explicit endpoint_url" do
+    let(:endpoint_url) { "http://localhost:4566" }
+
+    it "sets the attribute" do
+      expect(stack_definition.endpoint_url).to eq endpoint_url
     end
   end
 end

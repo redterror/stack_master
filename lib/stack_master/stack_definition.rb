@@ -19,7 +19,8 @@ module StackMaster
                   :compiler_options,
                   :parameters_dir,
                   :parameters,
-                  :parameter_files
+                  :parameter_files,
+                  :endpoint_url
 
     attr_reader :compiler
 
@@ -41,6 +42,7 @@ module StackMaster
       @allowed_accounts = Array(@allowed_accounts)
       @parameters ||= {}
       @parameter_files ||= []
+      @endpoint_url ||= nil
     end
 
     def ==(other)
@@ -60,7 +62,8 @@ module StackMaster
         @additional_parameter_lookup_dirs == other.additional_parameter_lookup_dirs &&
         @s3 == other.s3 &&
         @compiler == other.compiler &&
-        @compiler_options == other.compiler_options
+        @compiler_options == other.compiler_options &&
+        @endpoint_url == other.endpoint_url
     end
 
     def template_file_path
