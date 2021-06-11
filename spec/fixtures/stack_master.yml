@@ -1,6 +1,7 @@
 region_aliases:
   production: us-east-1
   staging: ap-southeast-2
+  local: us-west-1
 stack_defaults:
   allowed_accounts:
     - '555555555'
@@ -26,6 +27,8 @@ region_defaults:
     notification_arns:
       - test_arn_3
     role_arn: test_service_role_arn3
+  local:
+    endpoint_url: http://localhost:4566
 stacks:
   us-east-1:
     myapp_vpc:
@@ -51,3 +54,6 @@ stacks:
         - '9876543210'
       tags:
         test_override: 2
+  us-west-1:
+    myapp_web_with_endpoint:
+      template: myapp_web.rb

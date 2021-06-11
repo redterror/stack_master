@@ -71,7 +71,7 @@ RSpec.describe StackMaster::Config do
 
     it 'can return all stack definitions with no filters' do
       stacks = loaded_config.filter
-      expect(stacks.size).to eq 5
+      expect(stacks.size).to eq 6
     end
   end
 
@@ -109,6 +109,9 @@ RSpec.describe StackMaster::Config do
         'tags' => {'environment' => 'staging', 'test_override' => 1 },
         'role_arn' => 'test_service_role_arn3',
         'notification_arns' => ['test_arn_3'],
+      },
+      'us-west-1' => {
+        'endpoint_url' => 'http://localhost:4566'
       }
     })
   end
@@ -116,7 +119,8 @@ RSpec.describe StackMaster::Config do
   it 'loads region_aliases' do
     expect(loaded_config.region_aliases).to eq(
       'production' => 'us-east-1',
-      'staging' => 'ap-southeast-2'
+      'staging' => 'ap-southeast-2',
+      'local' => 'us-west-1'
     )
   end
 

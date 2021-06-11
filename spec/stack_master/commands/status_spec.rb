@@ -2,8 +2,8 @@ RSpec.describe StackMaster::Commands::Status do
   subject(:status) { described_class.new(config, Commander::Command::Options.new, false) }
   let(:config) { instance_double(StackMaster::Config, stacks: stacks) }
   let(:stacks) { [stack_definition_1, stack_definition_2] }
-  let(:stack_definition_1) { double(:stack_definition_1, region: 'us-east-1', stack_name: 'stack1', allowed_accounts: []) }
-  let(:stack_definition_2) { double(:stack_definition_2, region: 'us-east-1', stack_name: 'stack2', stack_status: 'CREATE_COMPLETE', allowed_accounts: []) }
+  let(:stack_definition_1) { double(:stack_definition_1, region: 'us-east-1', stack_name: 'stack1', allowed_accounts: [], endpoint_url: nil) }
+  let(:stack_definition_2) { double(:stack_definition_2, region: 'us-east-1', stack_name: 'stack2', stack_status: 'CREATE_COMPLETE', allowed_accounts: [], endpoint_url: nil) }
   let(:cf) { Aws::CloudFormation::Client.new(region: 'us-east-1') }
 
   before do
@@ -54,7 +54,7 @@ RSpec.describe StackMaster::Commands::Status do
 
     context 'when identity account is not allowed' do
       let(:sts) { Aws::STS::Client.new(stub_responses: true) }
-      let(:stack_definition_1) { double(:stack_definition_1, region: 'us-east-1', stack_name: 'stack1', allowed_accounts: ['not-account-id']) }
+      let(:stack_definition_1) { double(:stack_definition_1, region: 'us-east-1', stack_name: 'stack1', allowed_accounts: ['not-account-id'], endpoint_url: nil) }
       let(:stack1) { double(:stack1, template_body: '{"foo": "bar"}', template_hash: {foo: 'bar'}, template_format: :json, parameters_with_defaults: {a: 1}, stack_status: 'UPDATE_COMPLETE') }
       let(:stack2) { double(:stack2, template_body: '{}', template_hash: {}, template_format: :json, parameters_with_defaults: {a: 1}, stack_status: 'CREATE_COMPLETE') }
       let(:proposed_stack1) { double(:proposed_stack1, template_body: "{}", template_format: :json, parameters_with_defaults: {a: 1}) }
