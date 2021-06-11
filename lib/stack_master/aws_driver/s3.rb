@@ -10,12 +10,17 @@ module StackMaster
         @s3 = nil
       end
 
-      def upload_files(bucket: nil, prefix: nil, region: nil, files: {})
+      def set_endpoint_url(url)
+        @endpoint_url = url
+        @s3 = nil
+      end
+
+      def upload_files(bucket: nil, prefix: nil, region: nil, files: {}, endpoint_url: nil)
         raise StackMaster::AwsDriver::S3ConfigurationError, 'A bucket must be specified in order to use S3' unless bucket
 
         return if files.empty?
 
-        s3 = new_s3_client(region: region)
+        s3 = new_s3_client(region: region, endpoint_url: endpoint_url)
 
         current_objects = s3.list_objects(
           prefix: prefix,
@@ -60,8 +65,11 @@ module StackMaster
 
       private
 
-      def new_s3_client(region: nil)
-        Aws::S3::Client.new(region: region || @region)
+      def new_s3_client(region: nil, endpoint_url: endpoint_url)
+        s3_opts = {region: region || @region}
+        endpoint_url ||= @endpoint_url
+        s3_opts[:endpoint] = endpoint_url if endpoint_url
+        Aws::S3::Client.new(s3_opts)
       end
     end
   end

@@ -7,9 +7,20 @@ module StackMaster
         @region ||= ENV['AWS_REGION'] || Aws.config[:region] || Aws.shared_config.region
       end
 
+      def endpoint_url
+        @endpoint_url ||= Aws.config[:endpoint]
+      end
+
       def set_region(value)
         if region != value
           @region = value
+          @cf = nil
+        end
+      end
+
+      def set_endpoint_url(value)
+        if endpoint_url != value
+          @endpoint_url = value
           @cf = nil
         end
       end
@@ -36,7 +47,11 @@ module StackMaster
       private
 
       def cf
-        @cf ||= Aws::CloudFormation::Client.new(region: region, retry_limit: 10)
+        return @cf if @cf
+
+        cf_opts = {region: region, retry_limit: 10}
+        cf_opts[:endpoint] = endpoint_url if endpoint_url
+        @cf = Aws::CloudFormation::Client.new(cf_opts)
       end
 
     end

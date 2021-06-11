@@ -211,18 +211,22 @@ module StackMaster
 
           stack_name = Utils.underscore_to_hyphen(args[1])
           allowed_accounts = []
+          endpoint_url = nil
 
           # Because delete can work without a stack_master.yml
           if options.config and File.file?(options.config)
             config = load_config(options.config)
             region = Utils.underscore_to_hyphen(config.unalias_region(args[0]))
-            allowed_accounts = config.find_stack(region, stack_name)&.allowed_accounts
+            stack_definition = config.find_stack(region, stack_name)
+            allowed_accounts = stack_definition&.allowed_accounts
+            endpoint_url = stack_definition&.endpoint_url
           else
             region = args[0]
           end
 
           success = execute_if_allowed_account(allowed_accounts) do
             StackMaster.cloud_formation_driver.set_region(region)
+            StackMaster.cloud_formation_driver.set_endpoint_url(endpoint_url)
             StackMaster::Commands::Delete.perform(region, stack_name, options).success?
           end
           @kernel.exit false unless success
@@ -276,7 +280,10 @@ module StackMaster
         end if options.changed
         stack_definitions.each do |stack_definition|
           StackMaster.cloud_formation_driver.set_region(stack_definition.region)
-          StackMaster.stdout.puts "Executing #{command.command_name} on #{stack_definition.stack_name} in #{stack_definition.region}"
+          StackMaster.cloud_formation_driver.set_endpoint_url(stack_definition.endpoint_url)
+          msg = "Executing #{command.command_name} on #{stack_definition.stack_name} in #{stack_definition.region}"
+          msg += " via #{stack_definition.endpoint_url}" if stack_definition.endpoint_url
+          StackMaster.stdout.puts msg
           success = execute_if_allowed_account(stack_definition.allowed_accounts) do
             command.perform(config, stack_definition, options).success?
           end
