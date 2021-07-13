@@ -25,6 +25,12 @@ module StackMaster
         end
       end
 
+      def changesets_available?
+        # XXX: localstack doesn't support changesets and is currently the only
+        # use-case for setting the endpoint url.  This may need to grow up eventually.
+        @endpoint_url.nil?
+      end
+
       def_delegators :cf, :create_change_set,
                           :describe_change_set,
                           :execute_change_set,

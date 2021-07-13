@@ -281,6 +281,7 @@ module StackMaster
         stack_definitions.each do |stack_definition|
           StackMaster.cloud_formation_driver.set_region(stack_definition.region)
           StackMaster.cloud_formation_driver.set_endpoint_url(stack_definition.endpoint_url)
+          StackMaster.s3_driver.set_endpoint_url(stack_definition.endpoint_url)
           msg = "Executing #{command.command_name} on #{stack_definition.stack_name} in #{stack_definition.region}"
           msg += " via #{stack_definition.endpoint_url}" if stack_definition.endpoint_url
           StackMaster.stdout.puts msg

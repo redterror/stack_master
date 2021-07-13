@@ -81,7 +81,7 @@ module StackMaster
       end
 
       def use_change_set?
-        @options.on_failure.nil?
+        @options.on_failure.nil? && cf.changesets_available?
       end
 
       def create_stack_by_change_set
