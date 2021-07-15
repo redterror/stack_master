@@ -65,7 +65,7 @@ module StackMaster
 
       private
 
-      def new_s3_client(region: nil, endpoint_url: endpoint_url)
+      def new_s3_client(region: nil, endpoint_url: nil)
         s3_opts = {region: region || @region}
         endpoint_url ||= @endpoint_url
         s3_opts[:endpoint] = endpoint_url if endpoint_url
