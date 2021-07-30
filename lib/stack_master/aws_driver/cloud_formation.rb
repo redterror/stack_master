@@ -31,6 +31,11 @@ module StackMaster
         @endpoint_url.nil?
       end
 
+      def stack_policy_available?
+        # As above, localstack doesn't support this
+        @endpoint_url.nil?
+      end
+
       def_delegators :cf, :create_change_set,
                           :describe_change_set,
                           :execute_change_set,

@@ -18,7 +18,8 @@ module StackMaster
         ensure_valid_template_body_size!
         create_or_update_stack
         tail_stack_events unless StackMaster.quiet?
-        set_stack_policy
+        set_stack_policy if use_stack_policy?
+        StackMaster.stdout.puts 'done.'
       end
 
       private
@@ -82,6 +83,10 @@ module StackMaster
 
       def use_change_set?
         @options.on_failure.nil? && cf.changesets_available?
+      end
+
+      def use_stack_policy?
+        cf.stack_policy_available?
       end
 
       def create_stack_by_change_set
@@ -223,7 +228,6 @@ module StackMaster
           stack_name: stack_name,
           stack_policy_body: proposed_policy
         )
-        StackMaster.stdout.puts 'done.'
       end
 
       extend Forwardable
