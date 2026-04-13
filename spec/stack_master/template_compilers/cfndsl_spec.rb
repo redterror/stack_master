@@ -43,11 +43,12 @@ RSpec.describe StackMaster::TemplateCompilers::Cfndsl do
     end
 
     context 'with external_parameters' do
+      let(:template) { 'sample.rb' }
       let(:template_file_path) { 'spec/fixtures/templates/rb/cfndsl/sample.rb' }
       let(:compiler_options)  { { "external_parameters" => 'foo/bar.yml' } }
 
       it 'tells CfnDsl to use an external parameter file' do
-        expect(CfnDsl).to receive(:eval_file_with_extras).with(anything, ['foo/bar.yml'])
+        expect(CfnDsl).to receive(:eval_file_with_extras).with(anything, ['foo/bar.yml']).and_call_original
         compile
       end
     end
